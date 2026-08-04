@@ -26,7 +26,7 @@ from typing import List, Dict, Optional, Callable, Tuple, TypeVar, \
 
 import datetime
 import os
-import random
+import secrets
 import multiprocessing.pool
 import subprocess
 from prettytable import PrettyTable
@@ -1066,7 +1066,7 @@ class CephadmOrchestrator(orchestrator.Orchestrator, MgrModule):
                 name += f'{rank}.{rank_generation}.'
             name += host
             if suffix:
-                name += '.' + ''.join(random.choice(string.ascii_lowercase)
+                name += '.' + ''.join(secrets.choice(string.ascii_lowercase)
                                       for _ in range(6))
             if len([d for d in existing if d.daemon_id == name]):
                 if not suffix:
