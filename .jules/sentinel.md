@@ -1,0 +1,4 @@
+## 2024-05-18 - [Use Cryptographically Secure Randomness for Passwords]
+**Vulnerability:** Found `random.choice` being used to generate passwords for `monitor_password` and `keepalived_password` in `src/pybind/mgr/cephadm/services/ingress.py`, and unique daemon IDs in `src/pybind/mgr/cephadm/module.py`. The standard Python `random` module is not cryptographically secure and should not be used for security-sensitive operations like generating passwords or tokens.
+**Learning:** The Python `secrets` module should always be used instead of `random` when generating security-sensitive random values like passwords or tokens.
+**Prevention:** Regularly audit the codebase for usages of `random.choice` or `random.SystemRandom` (which is better but `secrets` is explicitly designed for this) when dealing with authentication credentials, and enforce the use of `secrets` instead.
