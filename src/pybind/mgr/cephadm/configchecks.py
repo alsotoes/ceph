@@ -52,7 +52,7 @@ class HostFacts:
 
         if isinstance(json_data, dict):
             keys = json_data.keys()
-            if all([k in keys for k in self.__dict__ if not k.startswith('_')]):
+            if all(k in keys for k in self.__dict__ if not k.startswith('_')):
                 self._valid = True
                 for k in json_data.keys():
                     if hasattr(self, k):

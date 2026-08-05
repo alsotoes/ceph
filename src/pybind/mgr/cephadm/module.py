@@ -4424,7 +4424,7 @@ Then run the following:
                                'to the current inventory setup. If any of these conditions change, the \n'
                                'preview will be invalid. Please make sure to have a minimal \n'
                                'timeframe between planning and applying the specs.'}]
-        if any([spec.service_type == 'host' for spec in specs]):
+        if any(spec.service_type == 'host' for spec in specs):
             return [{'error': 'Found <HostSpec>. Previews that include Host Specifications are not supported, yet.'}]
         for spec in specs:
             results.append(self._plan(cast(ServiceSpec, spec)))
