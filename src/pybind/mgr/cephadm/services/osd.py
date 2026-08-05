@@ -535,7 +535,7 @@ class RemoveUtil(object):
         return osds
 
         # todo start draining
-        #  return all([osd.start_draining() for osd in osds])
+        #  return all(osd.start_draining() for osd in osds)
 
     def ok_to_stop(self, osds: List["OSD"]) -> bool:
         cmd_args = {

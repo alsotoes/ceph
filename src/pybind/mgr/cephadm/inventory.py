@@ -1291,17 +1291,43 @@ class HostCache():
             )
         ]
 
+    # ⚡ Bolt: Performance optimization
+    # 💡 What: Replaced O(N) list generation across all hosts with O(1) dictionary lookup.
+    # 🎯 Why: Previously, checking if a host was unreachable/schedulable generated a list of all hosts with that state before performing an `in` check. This was highly inefficient for large clusters and could cause noticeable delays in host processing.
+    # 📊 Impact: O(1) check time instead of O(N). Expected to significantly reduce CPU overhead and latency for large clusters when scheduling tasks or filtering hosts.
+    def _get_host_spec(self, hostname: str) -> "Optional[HostSpec]":
+        if hostname not in self.mgr.inventory:
+            return None
+        # Inventory stores dicts, we need to convert to HostSpec
+        name = self.mgr.inventory._get_stored_name(hostname)
+        if name in self.mgr.inventory._inventory:
+            return self.mgr.inventory.spec_from_dict(self.mgr.inventory._inventory[name])
+        return None
+
     def is_host_unreachable(self, hostname: str) -> bool:
-        # take hostname and return if it matches the hostname of an unreachable host
-        return hostname in [h.hostname for h in self.get_unreachable_hosts()]
+        # take hostname and return if it is an unreachable host
+        if hostname in self.mgr.offline_hosts:
+            return True
+        h = self._get_host_spec(hostname)
+        if not h:
+            return False
+        return h.status.lower() in ['maintenance', 'offline']
 
     def is_host_schedulable(self, hostname: str) -> bool:
-        # take hostname and return if it matches the hostname of a schedulable host
-        return hostname in [h.hostname for h in self.get_schedulable_hosts()]
+        # take hostname and return if it is a schedulable host
+        if not self.host_had_daemon_refresh(hostname):
+            return False
+        h = self._get_host_spec(hostname)
+        if not h:
+            return False
+        return SpecialHostLabels.DRAIN_DAEMONS not in h.labels and not self.is_host_unreachable(hostname)
 
     def is_host_draining(self, hostname: str) -> bool:
-        # take hostname and return if it matches the hostname of a draining host
-        return hostname in [h.hostname for h in self.get_draining_hosts()]
+        # take hostname and return if it is a draining host
+        h = self._get_host_spec(hostname)
+        if not h:
+            return False
+        return SpecialHostLabels.DRAIN_DAEMONS in h.labels
 
     def get_facts(self, host: str) -> Dict[str, Any]:
         return self.facts.get(host, {})
@@ -1689,7 +1715,7 @@ class NodeProxyCache:
         return get_node_proxy_status_value(status, 'health', lower=True)
 
     def _has_health_value(self, statuses: ValuesView, health_value: str) -> bool:
-        return any([self._get_health_value(status) == health_value for status in statuses])
+        return any(self._get_health_value(status) == health_value for status in statuses)
 
     def _is_error_status(self, statuses: ValuesView) -> bool:
         return self._has_health_value(statuses, 'error')
@@ -1759,9 +1785,9 @@ class NodeProxyCache:
                     else:
                         state = 'ok'
                     _sys_id_res.append(state)
-                if any([s == 'unknown' for s in _sys_id_res]):
+                if any(s == 'unknown' for s in _sys_id_res):
                     state = 'unknown'
-                elif any([s == 'error' for s in _sys_id_res]):
+                elif any(s == 'error' for s in _sys_id_res):
                     state = 'error'
                 else:
                     state = 'ok'
