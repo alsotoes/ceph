@@ -60,16 +60,17 @@ def get_auth_entity(daemon_type: str, daemon_id: str, host: str = "") -> AuthEnt
     """
     # despite this mapping entity names to daemons, self.TYPE within
     # the CephService class refers to service types, not daemon types
-    if daemon_type in ['rgw', 'rbd-mirror', 'cephfs-mirror', 'nfs', "iscsi", 'nvmeof', 'ingress', 'ceph-exporter']:
+    # ⚡ Bolt: Use set for O(1) membership testing performance.
+    if daemon_type in {'rgw', 'rbd-mirror', 'cephfs-mirror', 'nfs', 'iscsi', 'nvmeof', 'ingress', 'ceph-exporter'}:
         return AuthEntity(f'client.{daemon_type}.{daemon_id}')
-    elif daemon_type in ['crash', 'agent', 'node-proxy']:
+    elif daemon_type in {'crash', 'agent', 'node-proxy'}:
         if host == "":
             raise OrchestratorError(
                 f'Host not provided to generate <{daemon_type}> auth entity name')
         return AuthEntity(f'client.{daemon_type}.{host}')
     elif daemon_type == 'mon':
         return AuthEntity('mon.')
-    elif daemon_type in ['mgr', 'osd', 'mds']:
+    elif daemon_type in {'mgr', 'osd', 'mds'}:
         return AuthEntity(f'{daemon_type}.{daemon_id}')
     else:
         raise OrchestratorError(f"unknown daemon type {daemon_type}")
@@ -810,7 +811,7 @@ class CephadmService(metaclass=ABCMeta):
         out = f'It appears safe to stop {",".join(names)}'
         err = f'It is NOT safe to stop {",".join(names)} at this time'
 
-        if self.TYPE not in ['mon', 'osd', 'mds']:
+        if self.TYPE not in {'mon', 'osd', 'mds'}:
             logger.debug(out)
             return HandleCommandResult(0, out)
 
