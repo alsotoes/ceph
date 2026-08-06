@@ -108,9 +108,10 @@ def name_to_config_section(name: str) -> ConfEntity:
     Map from daemon names to ceph entity names (as seen in config)
     """
     daemon_type = name.split('.', 1)[0]
-    if daemon_type in ['rgw', 'rbd-mirror', 'nfs', 'crash', 'iscsi', 'ceph-exporter', 'nvmeof', 'smb']:
+    # ⚡ Bolt: Use set for O(1) membership testing performance.
+    if daemon_type in {'rgw', 'rbd-mirror', 'nfs', 'crash', 'iscsi', 'ceph-exporter', 'nvmeof', 'smb'}:
         return ConfEntity('client.' + name)
-    elif daemon_type in ['mon', 'osd', 'mds', 'mgr', 'client']:
+    elif daemon_type in {'mon', 'osd', 'mds', 'mgr', 'client'}:
         return ConfEntity(name)
     else:
         return ConfEntity('mon')
