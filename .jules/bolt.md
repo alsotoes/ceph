@@ -1,0 +1,4 @@
+
+## 2024-05-24 - [Avoid `sum(lists, [])` for flattening, and repeating O(N) operations inside loops]
+**Learning:** In Python, flattening a list of lists with `sum(list_of_lists, [])` operates in O(N^2) time since lists are immutable and each `+` creates a new object in memory copying over elements from both lists. Using list comprehensions like `[item for sublist in list_of_lists for item in sublist]` performs the flattening operation much faster in O(N). Also, fetching `get_schedulable_hosts()` is an expensive loop evaluation that was previously re-calculated for every loop execution (instead of evaluated O(1) time outside).
+**Action:** Extract caching or expensive getters out of loop closures to calculate exactly once whenever possible. Additionally, when needing to flatten a multidimensional array in Python, avoid utilizing `sum()` with an empty array argument.
