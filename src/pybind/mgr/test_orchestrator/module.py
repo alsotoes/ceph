@@ -5,6 +5,7 @@ import os
 import threading
 import functools
 import itertools
+import shlex
 from subprocess import check_output, CalledProcessError
 
 from .cli import TestOrchestratorCLICommand
@@ -101,9 +102,10 @@ class TestOrchestrator(MgrModule, orchestrator.Orchestrator):
             ceph-volume inventory --format json
             """
             try:
-                c_v_out = check_output(cmd.format(tmpdir=os.environ.get('TMPDIR', '/tmp')), shell=True)
+                safe_tmpdir = shlex.quote(os.environ.get('TMPDIR', '/tmp'))
+                c_v_out = check_output(cmd.format(tmpdir=safe_tmpdir), shell=True)
             except (OSError, CalledProcessError):
-                c_v_out = check_output(cmd.format(tmpdir='.'),shell=True)
+                c_v_out = check_output(cmd.format(tmpdir='.'), shell=True)
 
         for out in c_v_out.splitlines():
             self.log.error(out)
