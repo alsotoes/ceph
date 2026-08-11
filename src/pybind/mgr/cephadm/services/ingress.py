@@ -1,6 +1,6 @@
 import ipaddress
 import logging
-import random
+import secrets
 import string
 from typing import List, Dict, Any, Tuple, cast, Optional, TYPE_CHECKING
 
@@ -143,7 +143,7 @@ class IngressService(CephService):
         password = self.mgr.get_store(pw_key)
         if password is None:
             if not spec.monitor_password:
-                password = ''.join(random.choice(string.ascii_lowercase)
+                password = ''.join(secrets.choice(string.ascii_lowercase)
                                    for _ in range(self.MAX_KEEPALIVED_PASS_LEN))
                 self.mgr.set_store(pw_key, password)
         else:
@@ -407,7 +407,7 @@ class IngressService(CephService):
         password = self.mgr.get_store(pw_key)
         if password is None:
             if not spec.keepalived_password:
-                password = ''.join(random.choice(string.ascii_lowercase)
+                password = ''.join(secrets.choice(string.ascii_lowercase)
                                    for _ in range(self.MAX_KEEPALIVED_PASS_LEN))
                 self.mgr.set_store(pw_key, password)
         else:
