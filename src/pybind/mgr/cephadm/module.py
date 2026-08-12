@@ -20,6 +20,7 @@ from cephadm.cert_mgr import CertMgr
 from cephadm.tlsobject_store import TLSObjectScope, TLSObjectException
 
 import string
+import secrets
 from typing import List, Dict, Optional, Callable, Tuple, TypeVar, \
     Any, Set, TYPE_CHECKING, cast, NamedTuple, Sequence, \
     Awaitable, Iterator
@@ -3870,7 +3871,7 @@ Then run the following:
         password = self.get_store(AlertmanagerService.PASS_CFG_KEY)
         if user is None or password is None:
             user = 'admin'
-            password = 'admin'
+            password = secrets.token_urlsafe(16)
             self.set_store(AlertmanagerService.USER_CFG_KEY, user)
             self.set_store(AlertmanagerService.PASS_CFG_KEY, password)
         return (user, password)
@@ -3880,7 +3881,7 @@ Then run the following:
         password = self.get_store(PrometheusService.PASS_CFG_KEY)
         if user is None or password is None:
             user = 'admin'
-            password = 'admin'
+            password = secrets.token_urlsafe(16)
             self.set_store(PrometheusService.USER_CFG_KEY, user)
             self.set_store(PrometheusService.PASS_CFG_KEY, password)
         return (user, password)
