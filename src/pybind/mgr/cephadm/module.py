@@ -6,6 +6,7 @@ import ipaddress
 import logging
 import re
 import shlex
+import secrets
 from collections import defaultdict
 from configparser import ConfigParser
 from contextlib import contextmanager
@@ -3870,7 +3871,7 @@ Then run the following:
         password = self.get_store(AlertmanagerService.PASS_CFG_KEY)
         if user is None or password is None:
             user = 'admin'
-            password = 'admin'
+            password = secrets.token_urlsafe(20)
             self.set_store(AlertmanagerService.USER_CFG_KEY, user)
             self.set_store(AlertmanagerService.PASS_CFG_KEY, password)
         return (user, password)
@@ -3880,7 +3881,7 @@ Then run the following:
         password = self.get_store(PrometheusService.PASS_CFG_KEY)
         if user is None or password is None:
             user = 'admin'
-            password = 'admin'
+            password = secrets.token_urlsafe(20)
             self.set_store(PrometheusService.USER_CFG_KEY, user)
             self.set_store(PrometheusService.PASS_CFG_KEY, password)
         return (user, password)
