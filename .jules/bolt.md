@@ -1,0 +1,3 @@
+## 2024-08-14 - [Optimize get_daemon in cephadm HostCache]
+**Learning:** Avoid O(N) list generation or iteration for lookup operations when the underlying data structure is a dictionary that supports O(1) lookups. In `inventory.py`, `get_daemon` was iterating through a flat list of all daemons instead of utilizing the inner dictionaries mapping daemon names to `DaemonDescription` objects.
+**Action:** When searching for specific keys or items, verify if the current or related data structure can be used for O(1) direct access before relying on iteration methods like `values()` or generating intermediate lists.
