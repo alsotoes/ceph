@@ -2,6 +2,7 @@ import errno
 import json
 import re
 import os
+import shlex
 import threading
 import functools
 import itertools
@@ -101,9 +102,10 @@ class TestOrchestrator(MgrModule, orchestrator.Orchestrator):
             ceph-volume inventory --format json
             """
             try:
-                c_v_out = check_output(cmd.format(tmpdir=os.environ.get('TMPDIR', '/tmp')), shell=True)
+                tmpdir = shlex.quote(os.environ.get('TMPDIR', '/tmp'))
+                c_v_out = check_output(cmd.format(tmpdir=tmpdir), shell=True)
             except (OSError, CalledProcessError):
-                c_v_out = check_output(cmd.format(tmpdir='.'),shell=True)
+                c_v_out = check_output(cmd.format(tmpdir='.'), shell=True)
 
         for out in c_v_out.splitlines():
             self.log.error(out)
