@@ -377,10 +377,13 @@ def _get_pool_datum(pool_name):
     return data
 
 
+REPLAYING_RE = re.compile("replaying, ({.*})")
+BOOTSTRAPPING_RE = re.compile("bootstrapping, IMAGE_COPY/COPY_OBJECT (.*)%")
+
+
 def _update_syncing_image_data(mirror_image, image):
     if mirror_image['state'] == 'Replaying':
-        p = re.compile("replaying, ({.*})")
-        replaying_data = p.findall(mirror_image['description'])
+        replaying_data = REPLAYING_RE.findall(mirror_image['description'])
         assert len(replaying_data) == 1
         replaying_data = json.loads(replaying_data[0])
         if 'replay_state' in replaying_data and replaying_data['replay_state'] == 'idle':
@@ -394,9 +397,8 @@ def _update_syncing_image_data(mirror_image, image):
             except KeyError:
                 pass
     else:
-        p = re.compile("bootstrapping, IMAGE_COPY/COPY_OBJECT (.*)%")
         image.update({
-            'progress': (p.findall(mirror_image['description']) or [0])[0]
+            'progress': (BOOTSTRAPPING_RE.findall(mirror_image['description']) or [0])[0]
         })
 
 
