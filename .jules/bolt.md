@@ -1,0 +1,3 @@
+## 2024-05-15 - [Avoid double list comprehensions for attribute checking]
+**Learning:** Constructs like `item in [obj.attr for obj in create_list_of_objs()]` are O(N) in both memory and CPU, creating an intermediate list of objects, a second intermediate list of attributes, and performing a full scan instead of early-exiting. This is a noticeable anti-pattern in cephadm's HostCache lookups (`is_host_unreachable`, `is_host_schedulable`, etc) where we only care about a single host.
+**Action:** Replace `item in [obj.attr for obj in get_objs()]` with direct loops: `for obj in all_objs(): if obj.attr == item: return check(obj)`. This allows O(1) early exit and zero intermediate list creations, significantly speeding up host state lookups.

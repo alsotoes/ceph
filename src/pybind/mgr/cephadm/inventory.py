@@ -1428,15 +1428,29 @@ class HostCache():
 
     def is_host_unreachable(self, hostname: str) -> bool:
         # take hostname and return if it matches the hostname of an unreachable host
-        return hostname in [h.hostname for h in self.get_unreachable_hosts()]
+        # Optimize: Avoid list comprehensions for early exit and to prevent intermediate list creations
+        if hostname in self.mgr.offline_hosts:
+            return True
+        for h in self.mgr.inventory.all_specs():
+            if h.hostname == hostname:
+                return h.status.lower() in ['maintenance', 'offline']
+        return False
 
     def is_host_schedulable(self, hostname: str) -> bool:
         # take hostname and return if it matches the hostname of a schedulable host
-        return hostname in [h.hostname for h in self.get_schedulable_hosts()]
+        # Optimize: Avoid list comprehensions for early exit and to prevent intermediate list creations
+        for h in self.mgr.inventory.all_specs():
+            if h.hostname == hostname:
+                return self.host_had_daemon_refresh(h.hostname) and SpecialHostLabels.DRAIN_DAEMONS not in h.labels
+        return False
 
     def is_host_draining(self, hostname: str) -> bool:
         # take hostname and return if it matches the hostname of a draining host
-        return hostname in [h.hostname for h in self.get_draining_hosts()]
+        # Optimize: Avoid list comprehensions for early exit and to prevent intermediate list creations
+        for h in self.mgr.inventory.all_specs():
+            if h.hostname == hostname:
+                return SpecialHostLabels.DRAIN_DAEMONS in h.labels
+        return False
 
     def get_facts(self, host: str) -> Dict[str, Any]:
         host = normalize_hostname(host)
