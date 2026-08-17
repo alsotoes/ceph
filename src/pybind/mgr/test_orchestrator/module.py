@@ -96,14 +96,12 @@ class TestOrchestrator(MgrModule, orchestrator.Orchestrator):
         try:
             c_v_out = check_output(['ceph-volume', 'inventory', '--format', 'json'])
         except OSError:
-            cmd = """
-            . {tmpdir}/ceph-volume-virtualenv/bin/activate
-            ceph-volume inventory --format json
-            """
+            cmd = "{tmpdir}/ceph-volume-virtualenv/bin/ceph-volume"
             try:
-                c_v_out = check_output(cmd.format(tmpdir=os.environ.get('TMPDIR', '/tmp')), shell=True)
+                tmpdir = os.environ.get('TMPDIR', '/tmp')
+                c_v_out = check_output([cmd.format(tmpdir=tmpdir), 'inventory', '--format', 'json'])
             except (OSError, CalledProcessError):
-                c_v_out = check_output(cmd.format(tmpdir='.'),shell=True)
+                c_v_out = check_output([cmd.format(tmpdir='.'), 'inventory', '--format', 'json'])
 
         for out in c_v_out.splitlines():
             self.log.error(out)
