@@ -1420,6 +1420,13 @@ class Module(MgrModule, OrchestratorClientMixin):
 
         osd_devices = self.get('osd_map_crush')['devices']
         servers = self.get_service_list()
+
+        # ⚡ Bolt Optimization: Precompute dictionary map for O(1) device class lookups.
+        # This replaces the O(N) nested loop over osd_devices per osd,
+        # transforming the overall collection time complexity for this section
+        # from O(N^2) to O(N).
+        osd_device_classes = {device['id']: device.get('class', '') for device in osd_devices}
+
         for osd in osd_map['osds']:
             # id can be used to link osd metrics and metadata
             id_ = osd['osd']
@@ -1433,11 +1440,7 @@ class Module(MgrModule, OrchestratorClientMixin):
                 )
                 continue
 
-            dev_class = None
-            for osd_device in osd_devices:
-                if osd_device['id'] == id_:
-                    dev_class = osd_device.get('class', '')
-                    break
+            dev_class = osd_device_classes.get(id_)
 
             if dev_class is None:
                 self.log.info("OSD {0} is missing from CRUSH map, "
