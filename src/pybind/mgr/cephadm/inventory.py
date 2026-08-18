@@ -1854,7 +1854,8 @@ class NodeProxyCache:
         return get_node_proxy_status_value(status, 'health', lower=True)
 
     def _has_health_value(self, statuses: ValuesView, health_value: str) -> bool:
-        return any([self._get_health_value(status) == health_value for status in statuses])
+        # Use generator expression instead of list comprehension for any() to short-circuit
+        return any(self._get_health_value(status) == health_value for status in statuses)
 
     def _is_error_status(self, statuses: ValuesView) -> bool:
         return self._has_health_value(statuses, 'error')
@@ -1924,9 +1925,10 @@ class NodeProxyCache:
                     else:
                         state = 'ok'
                     _sys_id_res.append(state)
-                if any([s == 'unknown' for s in _sys_id_res]):
+                # Use generator expression instead of list comprehension for any() to short-circuit
+                if any(s == 'unknown' for s in _sys_id_res):
                     state = 'unknown'
-                elif any([s == 'error' for s in _sys_id_res]):
+                elif any(s == 'error' for s in _sys_id_res):
                     state = 'error'
                 else:
                     state = 'ok'
