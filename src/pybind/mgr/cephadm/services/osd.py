@@ -535,7 +535,7 @@ class RemoveUtil(object):
         return osds
 
         # todo start draining
-        #  return all([osd.start_draining() for osd in osds])
+        #  return all(osd.start_draining() for osd in osds)
 
     def ok_to_stop(self, osds: List["OSD"]) -> bool:
         cmd_args = {
@@ -875,10 +875,10 @@ class OSD:
 
     @property
     def any_replace_params(self) -> bool:
-        return any([self.replace,
+        return any((self.replace,
                     self.replace_block,
                     self.replace_db,
-                    self.replace_wal])
+                    self.replace_wal))
 
     def __hash__(self) -> int:
         return hash(self.osd_id)
@@ -960,10 +960,10 @@ class OSDRemovalQueue(object):
             else:
                 logger.info(f"Daemon {osd} on {osd.hostname} was already removed")
 
-            any_replace_params: bool = any([osd.replace,
+            any_replace_params: bool = any((osd.replace,
                                             osd.replace_block,
                                             osd.replace_db,
-                                            osd.replace_wal])
+                                            osd.replace_wal))
             if any_replace_params:
                 # mark destroyed in osdmap
                 if not osd.destroy():
