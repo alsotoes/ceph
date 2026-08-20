@@ -213,12 +213,12 @@ class OSDMap(ceph_module.BasePyOSDMap):
     def get_pools(self) -> Dict[int, Dict[str, Any]]:
         # FIXME: efficient implementation
         d = self._dump()
-        return dict([(p['pool'], p) for p in d['pools']])
+        return {p['pool']: p for p in d['pools']}
 
     def get_pools_by_name(self) -> Dict[str, Dict[str, Any]]:
         # FIXME: efficient implementation
         d = self._dump()
-        return dict([(p['pool_name'], p) for p in d['pools']])
+        return {p['pool_name']: p for p in d['pools']}
 
     def new_incremental(self) -> 'OSDMapIncremental':
         return self._new_incremental()
@@ -355,7 +355,7 @@ class CRUSHMap(ceph_module.BasePyCRUSH):
     def get_osds_under(self, root_id: int) -> List[int]:
         # TODO don't abuse dump like this
         d = self.dump()
-        buckets = dict([(b['id'], b) for b in d['buckets']])
+        buckets = {b['id']: b for b in d['buckets']}
 
         osd_list = []
 
