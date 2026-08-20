@@ -1284,7 +1284,7 @@ class TestMonitoring:
                     tlsAuthWithCACert: true
                     tlsSkipVerify: false
                  secureJsonData:
-                   basicAuthPassword: admin
+                   basicAuthPassword: {cephadm_module._get_prometheus_credentials()[1]}
                    tlsCACert: "{oneline_cephadm_root_ca}"
                    tlsClientCert: "{oneline_ceph_generated_cert}"
                    tlsClientKey: "{oneline_ceph_generated_key}"
@@ -1452,7 +1452,7 @@ class TestMonitoring:
                     tlsAuthWithCACert: true
                     tlsSkipVerify: false
                  secureJsonData:
-                   basicAuthPassword: admin
+                   basicAuthPassword: {cephadm_module._get_prometheus_credentials()[1]}
                    tlsCACert: "{oneline_cephadm_root_ca}"
                    tlsClientCert: "{oneline_ceph_generated_cert}"
                    tlsClientKey: "{oneline_ceph_generated_key}"
