@@ -3764,12 +3764,13 @@ Then run the following:
                                         'Please re-run this command in a bit.'}]}
         # drop all keys that are not in search_hosts and only select reports that match the requested osdspecs
         previews_for_specs = {}
+        osdspec_service_ids = {x.service_id for x in osdspecs}
         for host, raw_reports in self.cache.osdspec_previews.items():
             if host not in matching_hosts:
                 continue
             osd_reports = []
             for osd_report in raw_reports:
-                if osd_report.get('osdspec') in [x.service_id for x in osdspecs]:
+                if osd_report.get('osdspec') in osdspec_service_ids:
                     osd_reports.append(osd_report)
             previews_for_specs.update({host: osd_reports})
         return previews_for_specs
