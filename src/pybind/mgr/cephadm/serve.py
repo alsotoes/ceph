@@ -1025,9 +1025,10 @@ class CephadmServe:
 
             # create daemons
             daemon_place_fails = []
+            daemons_to_remove_names = {d.name() for d in daemons_to_remove}
             for slot in slots_to_add:
                 # first remove daemon with conflicting port or name?
-                if slot.ports or slot.name in [d.name() for d in daemons_to_remove]:
+                if slot.ports or slot.name in daemons_to_remove_names:
                     for d in daemons_to_remove:
                         if (
                             d.hostname != slot.hostname
@@ -1044,6 +1045,7 @@ class CephadmServe:
                         # there is only 1 gateway.
                         self._remove_daemon(d.name(), d.hostname)
                         daemons_to_remove.remove(d)
+                        daemons_to_remove_names.discard(d.name())
                         progress_done += 1
                         hosts_altered.add(d.hostname)
                         break
