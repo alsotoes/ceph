@@ -1,0 +1,4 @@
+## 2024-05-24 - [Cross-Site Scripting (XSS) in Dashboard Chart Tooltips]
+**Vulnerability:** XSS via unescaped user input in ChartJS tooltips due to `.innerHTML` assignment.
+**Learning:** ChartJS custom tooltip implementations frequently manually construct HTML strings and assign them via `.innerHTML`. When these tooltips display user-controlled data (such as labels or specific values), they represent a direct DOM-based XSS sink if not properly escaped. The Angular DOMSanitizer only protects Angular templates (`[innerHTML]`), not raw DOM manipulation.
+**Prevention:** Always use a sanitization library (like `DOMPurify`) or escaping function (like `_.escape` from `lodash`) when constructing raw HTML strings from variables before assigning them to `.innerHTML` in custom component handlers, bypassing Angular's template engine.
