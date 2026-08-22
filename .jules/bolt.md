@@ -1,0 +1,3 @@
+## 2024-06-25 - Avoid list comprehensions for membership checks inside loops
+**Learning:** In Python, performing membership checks (`if x in [y.attr for y in elements]`) inside loops or other comprehensions leads to O(N*M) time complexity because the list is recreated and searched linearly on every iteration. This is a common performance pitfall in codebase architecture that deals with scheduling across many hosts or daemons (like `cephadm`).
+**Action:** Always precompute sets outside the loop (e.g., `attrs = {y.attr for y in elements}`) to leverage O(1) lookups, changing the complexity to O(N+M).
