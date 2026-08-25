@@ -1,0 +1,3 @@
+## 2026-08-25 - [Membership Check Optimizations in Python]
+**Learning:** Avoid using list comprehensions like `if x in [y.attr for y in elements]` for membership checks in loops. This allocates a new list in memory on every iteration, leading to O(N*M) time complexity and unnecessary garbage collection overhead.
+**Action:** Precompute sets outside the loop to enable O(1) lookups, or use `any(...)` with a generator expression to avoid allocations and enable short-circuit evaluation. Ensure double list comprehensions are collapsed into single ones where possible to avoid intermediate list memory allocations.
