@@ -1,0 +1,3 @@
+## 2024-05-14 - Optimize membership checks in host status queries
+**Learning:** In the `cephadm` module, operations checking if a hostname is in a list of hosts (e.g., `is_host_unreachable`) previously used list comprehensions like `hostname in [h.hostname for h in self.get_unreachable_hosts()]`. This allocates memory for an entirely new list of N items and requires full iteration, resulting in unnecessary memory allocation and O(N) operations.
+**Action:** Replace `x in [y.attr for y in elements]` with `any(x == y.attr for y in elements)`. This enables short-circuit evaluation, stopping as soon as a match is found, and avoids allocating a new list entirely, which is particularly beneficial when checking statuses against potentially large clusters of hosts.
