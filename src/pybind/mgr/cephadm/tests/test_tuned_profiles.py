@@ -41,13 +41,13 @@ class FakeCache:
         return []
 
     def is_host_unreachable(self, hostname: str):
-        return hostname in [h.hostname for h in self.get_unreachable_hosts()]
+        return any(hostname == h.hostname for h in self.get_unreachable_hosts())
 
     def is_host_schedulable(self, hostname: str):
-        return hostname in [h.hostname for h in self.get_schedulable_hosts()]
+        return any(hostname == h.hostname for h in self.get_schedulable_hosts())
 
     def is_host_draining(self, hostname: str):
-        return hostname in [h.hostname for h in self.get_draining_hosts()]
+        return any(hostname == h.hostname for h in self.get_draining_hosts())
 
     @property
     def networks(self):
