@@ -1,0 +1,4 @@
+## 2024-05-18 - XSS via innerHTML in ChartJS Tooltip
+**Vulnerability:** Cross-Site Scripting (XSS) vulnerability found in `src/pybind/mgr/dashboard/frontend/src/app/shared/models/chart-tooltip.ts` where unsanitized user-provided labels and values were directly concatenated into HTML strings and assigned to an element's `innerHTML`.
+**Learning:** Angular's template binding typically sanitizes HTML, but directly writing to `element.innerHTML` bypasses these protections. Custom components or integrations with external libraries (like ChartJS) that manipulate the DOM directly are high-risk areas.
+**Prevention:** Always escape dynamic data (using `_.escape` or a similar sanitizer) before embedding it into HTML strings that will be written directly to the DOM using `innerHTML`. Avoid manual DOM manipulation and use Angular's built-in binding and sanitization mechanisms whenever possible.
