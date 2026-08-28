@@ -1,0 +1,4 @@
+## 2024-05-18 - XSS via innerHTML Direct Assignment in Angular
+**Vulnerability:** A Cross-Site Scripting (XSS) vulnerability was found in the custom tooltip logic for ChartJS where user-provided strings were directly concatenated into HTML strings and assigned to an element's `.innerHTML`.
+**Learning:** Raw DOM manipulation via `.innerHTML` completely bypasses Angular's `DomSanitizer`, leaving the application vulnerable to XSS if the data isn't manually sanitized first.
+**Prevention:** Avoid direct DOM manipulation via `.innerHTML` whenever possible, and rely on Angular templates. If `.innerHTML` must be used, always sanitize or escape the data (e.g., using `_.escape()` from lodash) prior to assignment.
