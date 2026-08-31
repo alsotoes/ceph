@@ -1027,7 +1027,7 @@ class CephadmServe:
             daemon_place_fails = []
             for slot in slots_to_add:
                 # first remove daemon with conflicting port or name?
-                if slot.ports or slot.name in [d.name() for d in daemons_to_remove]:
+                if slot.ports or any(d.name() == slot.name for d in daemons_to_remove):
                     for d in daemons_to_remove:
                         if (
                             d.hostname != slot.hostname
@@ -1112,7 +1112,7 @@ class CephadmServe:
 
             if service_type == 'mgr':
                 active_mgr = svc.get_active_daemon(self.mgr.cache.get_daemons_by_type('mgr'))
-                if active_mgr.daemon_id in [d.daemon_id for d in daemons_to_remove]:
+                if any(d.daemon_id == active_mgr.daemon_id for d in daemons_to_remove):
                     # We can't just remove the active mgr like any other daemon.
                     # Need to fail over later so it can be removed on next pass.
                     # This can be accomplished by scheduling a restart of the active mgr.
