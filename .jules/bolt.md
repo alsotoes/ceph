@@ -1,0 +1,3 @@
+## 2024-06-25 - O(N*M) list comprehension optimization in schedule.py
+**Learning:** In Python, list comprehensions within membership checks (`if x in [y for y in elements]`) allocate new memory per loop iteration and cause O(N*M) time complexity. Using `any(...)` or precomputing the set outside the loop allows for O(1) lookups and significantly speeds up list filtering when checking membership against large datasets.
+**Action:** Always extract inner list comprehensions in membership checks (like `if x in [...]`) into a precomputed set before the loop, converting an O(N*M) lookup with heavy allocations into a fast O(N) operation with O(1) membership checks.
