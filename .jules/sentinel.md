@@ -1,0 +1,4 @@
+## 2024-05-15 - [XSS in ChartTooltip DOM manipulation]
+**Vulnerability:** Raw DOM manipulation without sanitization in `src/pybind/mgr/dashboard/frontend/src/app/shared/models/chart-tooltip.ts`. The title and body properties extracted from ChartJS tooltips were directly appended to an HTML string which was then assigned via `innerHTML`, creating a potential XSS vulnerability if tooltip data is controlled by user input or crafted specifically.
+**Learning:** In the Angular frontend, raw DOM manipulation (e.g., direct assignments to `.innerHTML` on elements) bypasses Angular's `DomSanitizer`. This can occur even in seemingly innocuous places like chart tooltips.
+**Prevention:** Always escape dynamic data (e.g., using `_.escape` from `lodash`) before direct DOM assignment or string concatenation meant for `innerHTML`.
