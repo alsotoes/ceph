@@ -1,0 +1,3 @@
+## 2024-09-06 - Optimized list comprehensions for membership testing
+**Learning:** Checking for membership using `if x in [y.attr for y in elements]` within a loop creates a new list on every iteration and runs in O(N*M) time. The intermediate list allocation in comprehensions like `[x.attr for x in [y for y in items if condition]]` is also wasteful.
+**Action:** Use precomputed sets for O(1) lookups in loops (`precomputed_set = {y.attr for y in elements}; if x in precomputed_set`), or short-circuiting generator expressions with `any()` when a quick exit is possible (`any(x == y.attr for y in elements)`). Avoid nested list comprehensions when a single one is sufficient (`[y.attr for y in items if condition]`).

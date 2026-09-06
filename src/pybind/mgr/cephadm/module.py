@@ -4256,7 +4256,7 @@ Then run the following:
         if placement.hosts:
             candidates = [h.hostname for h in placement.hosts if h.hostname in placement.hosts]
         elif placement.label:
-            candidates = [x.hostname for x in [h for h in all_hosts if placement.label in h.labels]]
+            candidates = [h.hostname for h in all_hosts if placement.label in h.labels]
         elif placement.host_pattern:
             candidates = [x for x in placement.filter_matching_hostspecs(all_hosts)]
         elif (placement.count is not None or placement.count_per_host is not None):
