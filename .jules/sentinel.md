@@ -1,0 +1,4 @@
+## 2024-05-18 - Prevent XSS in Direct innerHTML Assignments in Angular
+**Vulnerability:** Found direct assignments to `.innerHTML` in `src/pybind/mgr/dashboard/frontend/src/app/shared/models/chart-tooltip.ts` for dynamic chart tooltips using raw string concatenation. This bypasses Angular's built-in `DomSanitizer` protections and creates a Cross-Site Scripting (XSS) vulnerability if untrusted tooltip data is rendered.
+**Learning:** Even within an Angular application where template binding normally protects against XSS, any imperative DOM manipulation via `element.innerHTML = ...` operates outside of Angular's safety mechanisms.
+**Prevention:** Always escape untrusted string inputs (e.g., using `_.escape()` from `lodash`) before concatenating them into strings that will be directly assigned to `.innerHTML`.
