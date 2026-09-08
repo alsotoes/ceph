@@ -1,0 +1,4 @@
+## 2024-05-24 - Cross-Site Scripting (XSS) via DOM element innerHTML manipulation
+**Vulnerability:** A cross-site scripting (XSS) vulnerability was found in `ChartTooltip` located in `src/pybind/mgr/dashboard/frontend/src/app/shared/models/chart-tooltip.ts`. The custom tooltip builder was generating raw HTML via string concatenation with unescaped variables like `this.getTitle(title)` and `this.getBody(body)` and immediately injecting it into the DOM via `.innerHTML = innerHtml;`.
+**Learning:** Directly assigning to a DOM element's `.innerHTML` circumvents Angular's builtin `DomSanitizer` capabilities, creating an XSS vulnerability when user-controlled data such as tooltip titles/bodies are passed.
+**Prevention:** Avoid direct manipulation of `.innerHTML`. When unavoidable, ensure all dynamic values are sanitized or escaped using functions such as `_.escape` from `lodash` before adding them to an HTML string meant for direct DOM injection.
