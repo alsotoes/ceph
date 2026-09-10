@@ -5068,7 +5068,9 @@ Then run the following:
             # they may want to fix it.
             services_matching_drain_host: List[str] = []
             for sname, sspec in self.spec_store.all_specs.items():
-                if sspec.placement.hosts and hostname in [h.hostname for h in sspec.placement.hosts]:
+                # BOLT OPTIMIZATION: Replaced list comprehension `hostname in [h.hostname...]` with generator expression
+                # `any(h.hostname == hostname...)` to enable short-circuiting and avoid list allocation
+                if sspec.placement.hosts and any(h.hostname == hostname for h in sspec.placement.hosts):
                     services_matching_drain_host.append(sname)
             if services_matching_drain_host:
                 raise OrchestratorValidationError(f'Host {hostname} was found explicitly listed in the placements '
