@@ -1,0 +1,3 @@
+## 2024-05-24 - [Avoid List Comprehensions for Membership Checks in loops]
+**Learning:** Checking membership with `x in [y.attr for y in elements]` creates an unnecessary list and has O(N) complexity for every check, leading to O(N*M) overall when placed inside a loop or comprehension. Using `any(y.attr == x for y in elements)` short-circuits and avoids list allocation, providing a significant speedup, especially with large collections. This pattern was prevalent in `cephadm`'s scheduling and inventory checks.
+**Action:** Replace `in [comp]` with `any(...)` for membership tests where creating a `set` isn't feasible or the collection is small enough that short-circuiting is faster.
