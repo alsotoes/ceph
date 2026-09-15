@@ -1,0 +1,3 @@
+## 2024-09-15 - [O(N*M) List Comprehension Membership Checks]
+**Learning:** Python list comprehensions in membership tests (`if x in [y.attr for y in elements]`) evaluate completely on every loop iteration, leading to massive O(N*M) time complexity and memory churn, especially in critical path loops like daemon scheduling (`schedule.py`, `serve.py`).
+**Action:** Extract expensive list comprehensions from inner loops by precomputing sets (`{y.attr for y in elements}`) for O(1) lookups, or refactor to generator expressions using `any(...)` (`any(y.attr == x for y in elements)`) for early short-circuit evaluation without memory allocation overhead.
