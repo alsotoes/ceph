@@ -935,11 +935,12 @@ class CephadmAgentHelpers:
         if down_agent_hosts:
             detail: List[str] = []
             down_mult: float = max(self.mgr.agent_down_multiplier, 1.5)
+            down_agent_hosts_set = set(down_agent_hosts)
             for agent in down_agent_hosts:
                 detail.append((f'Cephadm agent on host {agent} has not reported in '
                               f'{down_mult * self.mgr.agent_refresh_rate} seconds. Agent is assumed '
                                'down and host may be offline.'))
-            for dd in [d for d in self.mgr.cache.get_daemons_by_type(CephadmAgent.TYPE) if d.hostname in down_agent_hosts]:
+            for dd in [d for d in self.mgr.cache.get_daemons_by_type(CephadmAgent.TYPE) if d.hostname in down_agent_hosts_set]:
                 dd.status = DaemonDescriptionStatus.error
             self.mgr.set_health_warning(
                 'CEPHADM_AGENT_DOWN',
