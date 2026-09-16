@@ -39,9 +39,10 @@ def get_placement_hosts(
         List[HostPlacementSpec]: List of host placement specs that match the placement criteria
     """
     if spec.placement.hosts:
+        draining_hostnames = {dh.hostname for dh in draining_hosts}
         host_specs = [
             h for h in spec.placement.hosts
-            if h.hostname not in [dh.hostname for dh in draining_hosts]
+            if h.hostname not in draining_hostnames
         ]
     elif spec.placement.label:
         labeled_hosts = [h for h in hosts if spec.placement.label in h.labels]
@@ -274,8 +275,8 @@ class HostAssignment(object):
 
         if self.spec.placement.hosts:
             explicit_hostnames = {h.hostname for h in self.spec.placement.hosts}
-            known_hosts = self.get_hostnames() + [h.hostname for h in self.draining_hosts]
-            unknown_hosts = explicit_hostnames.difference(set(known_hosts))
+            known_hosts = set(self.get_hostnames()) | {h.hostname for h in self.draining_hosts}
+            unknown_hosts = explicit_hostnames.difference(known_hosts)
             if unknown_hosts:
                 raise OrchestratorValidationError(
                     f'Cannot place {self.spec.one_line_str()} on {", ".join(sorted(unknown_hosts))}: Unknown hosts')
@@ -320,8 +321,8 @@ class HostAssignment(object):
                     to_remove.append(dd)
             to_add += host_slots
 
-        to_remove = [d for d in to_remove if d.hostname not in [
-            h.hostname for h in self.unreachable_hosts]]
+        unreachable_hostnames = {h.hostname for h in self.unreachable_hosts}
+        to_remove = [d for d in to_remove if d.hostname not in unreachable_hostnames]
 
         return slots, to_add, to_remove
 
@@ -432,12 +433,12 @@ class HostAssignment(object):
         existing = existing_active + existing_standby
 
         # build to_add
-        blocking_daemon_hostnames = [
+        blocking_daemon_hostnames = {
             h.hostname for h in self.blocking_daemon_hosts
-        ]
-        unreachable_hostnames = [
+        }
+        unreachable_hostnames = {
             h.hostname for h in self.unreachable_hosts
-        ]
+        }
         if not count:
             to_add = [
                 dd for dd in others if (
@@ -639,7 +640,7 @@ class HostAssignment(object):
                 in_maintenance[h.hostname] = True
                 continue
             in_maintenance[h.hostname] = False
-        unreachable_hosts = [h.hostname for h in self.unreachable_hosts]
+        unreachable_hosts = {h.hostname for h in self.unreachable_hosts}
         candidates = [
             c for c in candidates if c.hostname not in unreachable_hosts or in_maintenance[c.hostname]]
         return candidates
