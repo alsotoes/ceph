@@ -1,0 +1,3 @@
+## 2024-06-25 - Python List Comprehensions inside Loops in scheduling logic
+**Learning:** In Cephadm's `schedule.py`, using list comprehensions like `h.hostname not in [dh.hostname for dh in draining_hosts]` inside list comprehensions or loops introduces O(N*M) complexity since the inner list is allocated dynamically on every iteration.
+**Action:** Extract list comprehension to pre-compute sets outside the looping constructs (e.g. `draining_hostnames = {dh.hostname for dh in draining_hosts}`) for O(1) membership lookups and to avoid repeated memory allocation overhead, resulting in noticeable performance gains for complex setups.
