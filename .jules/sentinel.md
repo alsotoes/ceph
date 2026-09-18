@@ -1,0 +1,4 @@
+## 2024-05-24 - XSS Vulnerability in ChartTooltip via innerHTML
+**Vulnerability:** The Angular application's `ChartTooltip` class was using `.innerHTML` to construct HTML based on string inputs (`title` and `body`) without escaping them. This circumvents Angular's `DomSanitizer`, leading to potential Cross-Site Scripting (XSS) vulnerabilities if the data displayed in the chart comes from untrusted sources.
+**Learning:** Directly assigning to `.innerHTML` in Angular (or vanilla JS) circumvents built-in framework sanitization. Any dynamic content added this way must be manually sanitized.
+**Prevention:** Always use framework-provided template bindings (like `[innerHTML]`) which are sanitized by default, or manually sanitize data (e.g. using `_.escape()` from lodash) before inserting it via `.innerHTML`.
