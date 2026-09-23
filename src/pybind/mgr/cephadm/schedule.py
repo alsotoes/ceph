@@ -320,8 +320,9 @@ class HostAssignment(object):
                     to_remove.append(dd)
             to_add += host_slots
 
-        to_remove = [d for d in to_remove if d.hostname not in [
-            h.hostname for h in self.unreachable_hosts]]
+        # Precompute set for O(1) lookups to avoid O(N*M) list comprehension
+        unreachable_hostnames = {h.hostname for h in self.unreachable_hosts}
+        to_remove = [d for d in to_remove if d.hostname not in unreachable_hostnames]
 
         return slots, to_add, to_remove
 
