@@ -1,4 +1,5 @@
 import { ElementRef } from '@angular/core';
+import * as _ from 'lodash';
 
 export class ChartTooltip {
   tooltipEl: any;
@@ -107,10 +108,10 @@ export class ChartTooltip {
   }
 
   getBody(body: string) {
-    return body;
+    return _.escape(body);
   }
 
   getTitle(title: string) {
-    return title;
+    return _.escape(title);
   }
 }
