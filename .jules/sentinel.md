@@ -1,0 +1,4 @@
+## 2024-05-14 - XSS vulnerability in chart tooltips bypassing DomSanitizer
+**Vulnerability:** XSS via direct DOM manipulation (`.innerHTML`) in ChartJS tooltip integration bypassing Angular's built-in DomSanitizer.
+**Learning:** Third-party libraries that manage their own DOM updates outside of Angular's template binding system (like ChartJS tooltips) can bypass Angular's automatic XSS protections (DomSanitizer). Direct assignment to `element.innerHTML` in these contexts is a critical XSS vector if inputs (like chart labels or data) are user-controlled.
+**Prevention:** Always manually sanitize (e.g., using `_.escape`) any dynamic data before assigning it to `.innerHTML` in non-Angular managed contexts.
