@@ -1,0 +1,4 @@
+## 2025-02-14 - Fix Cross-Site Scripting (XSS) Vulnerability in ChartTooltip
+**Vulnerability:** The Angular dashboard frontend uses raw DOM manipulation (`innerHTML`) to render tooltips (`chart-tooltip.ts`), explicitly bypassing Angular's `DomSanitizer`. User-controlled strings (like chart titles or series body text) were concatenated directly into the HTML strings without any escaping, leading to a Cross-Site Scripting (XSS) vulnerability.
+**Learning:** In Angular applications, raw assignments to `innerHTML` (especially in custom wrapper classes outside templates) are a common vector for XSS if inputs aren't sanitized or escaped first.
+**Prevention:** Always use a templating engine when possible, or escape untrusted text using `_.escape()` from lodash before appending it to a string that will be used as `innerHTML`.
