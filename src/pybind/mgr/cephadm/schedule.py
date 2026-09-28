@@ -39,9 +39,11 @@ def get_placement_hosts(
         List[HostPlacementSpec]: List of host placement specs that match the placement criteria
     """
     if spec.placement.hosts:
+        # Precompute set to avoid O(N*M) list recreation in loop
+        draining_hostnames = {dh.hostname for dh in draining_hosts}
         host_specs = [
             h for h in spec.placement.hosts
-            if h.hostname not in [dh.hostname for dh in draining_hosts]
+            if h.hostname not in draining_hostnames
         ]
     elif spec.placement.label:
         labeled_hosts = [h for h in hosts if spec.placement.label in h.labels]
