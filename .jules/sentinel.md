@@ -1,0 +1,4 @@
+## 2024-05-24 - DOM XSS via innerHTML Assignment
+**Vulnerability:** The Angular application constructs HTML strings by concatenating unescaped user-controlled values (e.g., chart tooltip titles, bodies, and color properties) and assigns the resulting string directly to an element's `.innerHTML` property.
+**Learning:** In Angular, direct assignments to an element's `.innerHTML` property bypass the framework's built-in `DomSanitizer`, which normally protects against Cross-Site Scripting (XSS). Consequently, any unescaped user input included in the assigned HTML string becomes a vector for DOM-based XSS.
+**Prevention:** When dynamically building HTML strings for direct assignment to `.innerHTML` (or similar sinks), always manually escape all dynamic, potentially user-controlled data. In this codebase, use `_.escape` from the `lodash` library (`import * as _ from 'lodash';`) to safely encode HTML entities before concatenation.
