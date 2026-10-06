@@ -1,0 +1,3 @@
+## 2024-05-24 - Avoid List Comprehensions for Membership Checks
+**Learning:** Found multiple instances where list comprehensions were used inside loops or just for membership checks (e.g., `x in [y.attr for y in elements]`). This is an O(N) allocation that can be particularly severe inside nested loops, leading to O(N*M) time complexity and memory overhead.
+**Action:** Replace `in [y.attr for y in elements]` with precomputed sets `{y.attr for y in elements}` outside the loop if the list is static, or use generator expressions with `any(x == y.attr for y in elements)` to enable short-circuiting and eliminate unnecessary list allocations.
