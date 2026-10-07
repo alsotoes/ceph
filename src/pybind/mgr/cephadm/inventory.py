@@ -1428,15 +1428,15 @@ class HostCache():
 
     def is_host_unreachable(self, hostname: str) -> bool:
         # take hostname and return if it matches the hostname of an unreachable host
-        return hostname in [h.hostname for h in self.get_unreachable_hosts()]
+        return any(hostname == h.hostname for h in self.get_unreachable_hosts())
 
     def is_host_schedulable(self, hostname: str) -> bool:
         # take hostname and return if it matches the hostname of a schedulable host
-        return hostname in [h.hostname for h in self.get_schedulable_hosts()]
+        return any(hostname == h.hostname for h in self.get_schedulable_hosts())
 
     def is_host_draining(self, hostname: str) -> bool:
         # take hostname and return if it matches the hostname of a draining host
-        return hostname in [h.hostname for h in self.get_draining_hosts()]
+        return any(hostname == h.hostname for h in self.get_draining_hosts())
 
     def get_facts(self, host: str) -> Dict[str, Any]:
         host = normalize_hostname(host)
