@@ -1,0 +1,3 @@
+## 2024-05-13 - [Avoid list comprehensions for membership checks]
+**Learning:** Found several places in cephadm using list comprehensions for membership tests `if x in [y for y in items]` or nested list comprehensions `[x.hostname for x in [h for h in all_hosts if placement.label in h.labels]]` which creates unnecessary intermediate list allocations, which causes significant performance degradation especially in nested loops or frequently called functions.
+**Action:** Replace list comprehensions used for membership with generators and `any()`, or precompute sets before loops, or simply simplify the list comprehension to not be nested.
