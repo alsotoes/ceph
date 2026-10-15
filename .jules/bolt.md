@@ -1,0 +1,3 @@
+## 2026-10-15 - Optimize membership checks in loops
+**Learning:** In the `cephadm` module, list comprehensions are frequently used for membership checks (e.g. `if x in [y.attr for y in elements]`). This creates unnecessary memory allocations and results in O(N*M) time complexity when used inside a loop, particularly when the target list modifies size during iteration preventing precomputed sets.
+**Action:** Replace inline list comprehensions for membership checks with a short-circuiting generator expression like `any(y.attr == x for y in elements)` when the list mutates, or precompute a set outside the loop for O(1) lookups if the source elements are static.
