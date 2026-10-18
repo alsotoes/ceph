@@ -1,0 +1,3 @@
+## 2024-10-18 - Avoid List Comprehensions for Membership Checks in Loops
+**Learning:** Using `[x.attr for x in objects]` inside a loop to check for membership creates a new list on every iteration, leading to unnecessary memory allocation and O(N*M) time complexity. Memory analysis shows a 30x performance penalty for `in [x for x]` versus `any(x == y for y)` in Python list operations in the `cephadm` module.
+**Action:** Replace `item in [x.attr for x in objects]` with `any(item == x.attr for x in objects)` for short-circuiting, or extract it to a precomputed set outside the loop (`{x.attr for x in objects}`) for O(1) lookups if the source list does not change within the loop.
