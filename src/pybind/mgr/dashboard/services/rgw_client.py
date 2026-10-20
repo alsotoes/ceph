@@ -12,7 +12,7 @@ import socket
 import tempfile
 import time
 import uuid
-import xml.etree.ElementTree as ET  # noqa: N814
+import defusedxml.ElementTree as ET  # type: ignore # noqa: N814
 from collections import defaultdict
 from enum import Enum
 from subprocess import SubprocessError
