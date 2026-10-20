@@ -15,3 +15,4 @@ grpcio
 grpcio-tools
 jmespath
 xmltodict
+defusedxml
