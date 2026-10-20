@@ -1,0 +1,3 @@
+## 2024-05-14 - Precomputation of membership checks
+**Learning:** Found instances of `x not in [y.attr for y in elements]` inside loops/list comprehensions in `cephadm` (`src/pybind/mgr/cephadm/schedule.py`). This causes O(N*M) complexity and unnecessary list instantiations on each iteration, which can slow down placement scheduling over many hosts/daemons.
+**Action:** Extract precomputable items into a precomputed `set()` outside the loop/comprehension (e.g., `draining_hostnames = {dh.hostname for dh in draining_hosts}`) and use `x not in draining_hostnames` for O(1) lookups and avoiding recomputation.
