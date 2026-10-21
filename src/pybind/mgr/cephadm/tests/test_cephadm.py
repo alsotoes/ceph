@@ -2868,13 +2868,13 @@ osd_k2 = osd_v2
         cephadm_module.cache.update_host_daemons('host2', {})
         cephadm_module.cache.update_host_daemons('host3', {})
 
-        assert 'host1' in [h.hostname for h in cephadm_module.cache.get_conf_keyring_available_hosts()]
-        assert 'host2' in [h.hostname for h in cephadm_module.cache.get_conf_keyring_available_hosts()]
-        assert 'host3' not in [h.hostname for h in cephadm_module.cache.get_conf_keyring_available_hosts()]
+        assert any(h.hostname == 'host1' for h in cephadm_module.cache.get_conf_keyring_available_hosts())
+        assert any(h.hostname == 'host2' for h in cephadm_module.cache.get_conf_keyring_available_hosts())
+        assert not any(h.hostname == 'host3' for h in cephadm_module.cache.get_conf_keyring_available_hosts())
 
-        assert 'host1' not in [h.hostname for h in cephadm_module.cache.get_conf_keyring_draining_hosts()]
-        assert 'host2' not in [h.hostname for h in cephadm_module.cache.get_conf_keyring_draining_hosts()]
-        assert 'host3' in [h.hostname for h in cephadm_module.cache.get_conf_keyring_draining_hosts()]
+        assert not any(h.hostname == 'host1' for h in cephadm_module.cache.get_conf_keyring_draining_hosts())
+        assert not any(h.hostname == 'host2' for h in cephadm_module.cache.get_conf_keyring_draining_hosts())
+        assert any(h.hostname == 'host3' for h in cephadm_module.cache.get_conf_keyring_draining_hosts())
 
         cephadm_module.keys.update(ClientKeyringSpec('keyring1', PlacementSpec(label='keyring1')))
 

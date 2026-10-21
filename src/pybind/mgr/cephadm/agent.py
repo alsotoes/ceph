@@ -939,7 +939,7 @@ class CephadmAgentHelpers:
                 detail.append((f'Cephadm agent on host {agent} has not reported in '
                               f'{down_mult * self.mgr.agent_refresh_rate} seconds. Agent is assumed '
                                'down and host may be offline.'))
-            for dd in [d for d in self.mgr.cache.get_daemons_by_type(CephadmAgent.TYPE) if d.hostname in down_agent_hosts]:
+            for dd in (d for d in self.mgr.cache.get_daemons_by_type(CephadmAgent.TYPE) if d.hostname in down_agent_hosts):
                 dd.status = DaemonDescriptionStatus.error
             self.mgr.set_health_warning(
                 'CEPHADM_AGENT_DOWN',

@@ -1934,7 +1934,7 @@ class CephadmOrchestrator(orchestrator.Orchestrator, MgrModule):
         return HandleCommandResult(stdout="ok")
 
     def _config_check_valid(self, check_name: str) -> bool:
-        return check_name in [chk.name for chk in self.config_checker.health_checks]
+        return any(chk.name == check_name for chk in self.config_checker.health_checks)
 
     def _update_config_check(self, check_name: str, status: str) -> Tuple[int, str]:
         checks_raw = self.get_store('config_checks')
@@ -3889,8 +3889,9 @@ Then run the following:
             if host not in matching_hosts:
                 continue
             osd_reports = []
+            osdspec_ids = {x.service_id for x in osdspecs}
             for osd_report in raw_reports:
-                if osd_report.get('osdspec') in [x.service_id for x in osdspecs]:
+                if osd_report.get('osdspec') in osdspec_ids:
                     osd_reports.append(osd_report)
             previews_for_specs.update({host: osd_reports})
         return previews_for_specs
@@ -4463,7 +4464,7 @@ Then run the following:
         if placement.hosts:
             candidates = [h.hostname for h in placement.hosts if h.hostname in placement.hosts]
         elif placement.label:
-            candidates = [x.hostname for x in [h for h in all_hosts if placement.label in h.labels]]
+            candidates = [h.hostname for h in all_hosts if placement.label in h.labels]
         elif placement.host_pattern:
             candidates = [x for x in placement.filter_matching_hostspecs(all_hosts)]
         elif (placement.count is not None or placement.count_per_host is not None):
@@ -4870,7 +4871,7 @@ Then run the following:
                         "The 'nvmeof' service id/name must end with '.<nvmeof-group-name>'. Found "
                         f"group name '{nvmeof_spec.group}' and service id '{nvmeof_spec.service_id}'"
                     )
-            for sspec in [s.spec for s in self.spec_store.get_by_service_type('nvmeof')]:
+            for sspec in (s.spec for s in self.spec_store.get_by_service_type('nvmeof')):
                 nspec = cast(NvmeofServiceSpec, sspec)
                 if nvmeof_spec.group == nspec.group and nvmeof_spec.service_id != nspec.service_id:
                     raise OrchestratorError(f"Cannot create nvmeof service with group {nvmeof_spec.group}. That group is already "
@@ -5370,7 +5371,7 @@ Then run the following:
             # they may want to fix it.
             services_matching_drain_host: List[str] = []
             for sname, sspec in self.spec_store.all_specs.items():
-                if sspec.placement.hosts and hostname in [h.hostname for h in sspec.placement.hosts]:
+                if sspec.placement.hosts and any(h.hostname == hostname for h in sspec.placement.hosts):
                     services_matching_drain_host.append(sname)
             if services_matching_drain_host:
                 raise OrchestratorValidationError(f'Host {hostname} was found explicitly listed in the placements '
