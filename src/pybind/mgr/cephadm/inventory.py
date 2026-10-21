@@ -1452,15 +1452,15 @@ class HostCache():
 
     def is_host_unreachable(self, hostname: str) -> bool:
         # take hostname and return if it matches the hostname of an unreachable host
-        return hostname in [h.hostname for h in self.get_unreachable_hosts()]
+        return any(h.hostname == hostname for h in self.get_unreachable_hosts())
 
     def is_host_schedulable(self, hostname: str) -> bool:
         # take hostname and return if it matches the hostname of a schedulable host
-        return hostname in [h.hostname for h in self.get_schedulable_hosts()]
+        return any(h.hostname == hostname for h in self.get_schedulable_hosts())
 
     def is_host_draining(self, hostname: str) -> bool:
         # take hostname and return if it matches the hostname of a draining host
-        return hostname in [h.hostname for h in self.get_draining_hosts()]
+        return any(h.hostname == hostname for h in self.get_draining_hosts())
 
     def get_facts(self, host: str) -> Dict[str, Any]:
         host = normalize_hostname(host)
@@ -1538,7 +1538,7 @@ class HostCache():
             logger.debug(f'Found related daemons {dds} for service {service_spec.service_name()}')
             return dds
         else:
-            for ingress_spec in [cast(IngressSpec, s) for s in self.mgr.spec_store.active_specs.values() if s.service_type == 'ingress']:
+            for ingress_spec in (cast(IngressSpec, s) for s in self.mgr.spec_store.active_specs.values() if s.service_type == 'ingress'):
                 if ingress_spec.backend_service == service_spec.service_name():
                     dds = list(dd for dd in self._get_daemons() if dd.service_name() == ingress_spec.service_name())
                     dds += list(dd for dd in self._get_tmp_daemons() if dd.service_name() == ingress_spec.service_name())

@@ -23,7 +23,7 @@ def get_trusted_ips(mgr: "CephadmOrchestrator", spec: IscsiServiceSpec) -> str:
     # add active mgr ip address to trusted list so dashboard can access
     trusted_ip_list = spec.trusted_ip_list if spec.trusted_ip_list else ''
     mgr_ip = mgr.get_mgr_ip()
-    if mgr_ip not in [s.strip() for s in trusted_ip_list.split(',')]:
+    if not any(s.strip() == mgr_ip for s in trusted_ip_list.split(',')):
         if trusted_ip_list:
             trusted_ip_list += ','
         trusted_ip_list += mgr_ip

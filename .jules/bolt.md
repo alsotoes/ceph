@@ -1,0 +1,3 @@
+## 2024-10-21 - Optimize O(N) list comprehensions in membership tests
+**Learning:** In the `cephadm` module, many operations historically used inefficient list comprehensions within membership checks (`item in [x.attr for x in elements]`), resulting in O(N) lookups and unnecessary list allocations. Changing these to `any(x.attr == item for x in elements)` enables short-circuiting and uses generators to avoid building lists in memory.
+**Action:** When auditing codebase performance, prefer generators (`any()`) over explicit set conversions or list comprehensions for one-off membership checks across object attributes.

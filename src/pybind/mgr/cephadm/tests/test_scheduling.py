@@ -1135,7 +1135,7 @@ def test_node_assignment2(service_type, placement, hosts,
         daemons=daemons,
     ).place()
     assert len(hosts) == expected_len
-    for h in [h.hostname for h in hosts]:
+    for h in (h.hostname for h in hosts):
         assert h in in_set
 
 
@@ -1171,7 +1171,7 @@ def test_node_assignment3(service_type, placement, hosts,
     ).place()
     assert len(hosts) == expected_len
     for h in must_have:
-        assert h in [h.hostname for h in hosts]
+        assert any(h_.hostname == h for h_ in hosts)
 
 
 class NodeAssignmentTest4(NamedTuple):
