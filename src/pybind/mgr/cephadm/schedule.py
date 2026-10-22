@@ -41,7 +41,8 @@ def get_placement_hosts(
     if spec.placement.hosts:
         host_specs = [
             h for h in spec.placement.hosts
-            if h.hostname not in [dh.hostname for dh in draining_hosts]
+            # Optimize O(N) list allocation to O(1) memory with generator expression and short-circuiting
+            if not any(dh.hostname == h.hostname for dh in draining_hosts)
         ]
     elif spec.placement.label:
         labeled_hosts = [h for h in hosts if spec.placement.label in h.labels]
