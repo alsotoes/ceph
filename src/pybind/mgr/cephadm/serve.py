@@ -1062,7 +1062,8 @@ class CephadmServe:
             daemon_place_fails = []
             for slot in slots_to_add:
                 # first remove daemon with conflicting port or name?
-                if slot.ports or slot.name in [d.name() for d in daemons_to_remove]:
+                # ⚡ Bolt: Use a generator expression for short-circuiting to prevent O(N) list creation in every loop iteration
+                if slot.ports or any(slot.name == d.name() for d in daemons_to_remove):
                     for d in daemons_to_remove:
                         if (
                             d.hostname != slot.hostname
