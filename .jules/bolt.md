@@ -1,0 +1,3 @@
+## 2026-10-29 - Optimize loop membership checks with list modifications
+**Learning:** When optimizing list comprehensions in loops (`[x.attr for x in list]`), if the underlying list is modified within the loop (e.g., via `.remove()`), extracting the comprehension to a precomputed set outside the loop will cause the set to become stale and introduce bugs.
+**Action:** In such cases, replace the list comprehension with a short-circuiting generator expression using `any(...)` directly in the loop. This avoids the memory allocation of recreating the list on every iteration while staying up-to-date with the modified list.
