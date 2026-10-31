@@ -3889,8 +3889,9 @@ Then run the following:
             if host not in matching_hosts:
                 continue
             osd_reports = []
+            osdspec_ids = {x.service_id for x in osdspecs}
             for osd_report in raw_reports:
-                if osd_report.get('osdspec') in [x.service_id for x in osdspecs]:
+                if osd_report.get('osdspec') in osdspec_ids:
                     osd_reports.append(osd_report)
             previews_for_specs.update({host: osd_reports})
         return previews_for_specs
