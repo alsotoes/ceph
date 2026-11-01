@@ -4463,7 +4463,7 @@ Then run the following:
         if placement.hosts:
             candidates = [h.hostname for h in placement.hosts if h.hostname in placement.hosts]
         elif placement.label:
-            candidates = [x.hostname for x in [h for h in all_hosts if placement.label in h.labels]]
+            candidates = [h.hostname for h in all_hosts if placement.label in h.labels]
         elif placement.host_pattern:
             candidates = [x for x in placement.filter_matching_hostspecs(all_hosts)]
         elif (placement.count is not None or placement.count_per_host is not None):
@@ -5370,7 +5370,7 @@ Then run the following:
             # they may want to fix it.
             services_matching_drain_host: List[str] = []
             for sname, sspec in self.spec_store.all_specs.items():
-                if sspec.placement.hosts and hostname in [h.hostname for h in sspec.placement.hosts]:
+                if sspec.placement.hosts and any(hostname == h.hostname for h in sspec.placement.hosts):
                     services_matching_drain_host.append(sname)
             if services_matching_drain_host:
                 raise OrchestratorValidationError(f'Host {hostname} was found explicitly listed in the placements '
