@@ -67,14 +67,17 @@ def main(arguments):
         ceph_opts = ceph_options(options)
 
     fs_opts = fs_options(options, ceph_opts)
-    ceph_opts = ' '.join(['--' + o.replace('ceph.', '', 1) for o in ceph_opts])
+    ceph_opts = ['--' + o.replace('ceph.', '', 1) for o in ceph_opts]
 
-    command = 'ceph-fuse %s %s' % (ceph_opts, mountpoint)
+    command = ['ceph-fuse']
+    if ceph_opts:
+        command.extend(ceph_opts)
+    command.append(mountpoint)
 
     if fs_opts:
-        command += ' -o %s' % (fs_opts)
+        command.extend(['-o', fs_opts])
 
-    mount_cmd = Popen(command, shell=True)
+    mount_cmd = Popen(command)
     mount_cmd.communicate()
 
     if (mount_cmd.returncode != 0):
