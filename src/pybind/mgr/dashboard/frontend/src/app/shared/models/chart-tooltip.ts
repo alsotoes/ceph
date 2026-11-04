@@ -1,4 +1,5 @@
 import { ElementRef } from '@angular/core';
+import * as _ from 'lodash';
 
 export class ChartTooltip {
   tooltipEl: any;
@@ -63,7 +64,8 @@ export class ChartTooltip {
       let innerHtml = '<thead>';
 
       titleLines.forEach((title: string) => {
-        innerHtml += '<tr><th>' + this.getTitle(title) + '</th></tr>';
+        // Escape input using lodash to prevent XSS vulnerabilities when updating innerHTML
+        innerHtml += '<tr><th>' + _.escape(this.getTitle(title)) + '</th></tr>';
       });
       innerHtml += '</thead><tbody>';
 
@@ -73,7 +75,8 @@ export class ChartTooltip {
         style += '; border-color:' + (this.customColors.borderColor || colors.borderColor);
         style += '; border-width: 2px';
         const span = '<span class="chartjs-tooltip-key" style="' + style + '"></span>';
-        innerHtml += '<tr><td nowrap>' + span + this.getBody(body) + '</td></tr>';
+        // Escape input using lodash to prevent XSS vulnerabilities when updating innerHTML
+        innerHtml += '<tr><td nowrap>' + span + _.escape(this.getBody(body)) + '</td></tr>';
       });
       innerHtml += '</tbody>';
 
