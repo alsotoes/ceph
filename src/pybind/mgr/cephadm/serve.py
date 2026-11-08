@@ -1025,12 +1025,17 @@ class CephadmServe:
 
         try:
             # assign names
+            # OPTIMIZATION: Precompute surviving daemons to avoid O(N^3) complexity
+            # where N is the number of daemons and slots
+            daemons_to_remove_names = {d.name() for d in daemons_to_remove}
+            surviving_daemons = [d for d in daemons if d.name() not in daemons_to_remove_names]
+
             for i in range(len(slots_to_add)):
                 slot = slots_to_add[i]
                 slot = slot.assign_name(self.mgr.get_unique_name(
                     slot.daemon_type,
                     slot.hostname,
-                    [d for d in daemons if d not in daemons_to_remove],
+                    surviving_daemons,
                     prefix=spec.service_id,
                     forcename=slot.name,
                     rank=slot.rank,
@@ -1062,7 +1067,8 @@ class CephadmServe:
             daemon_place_fails = []
             for slot in slots_to_add:
                 # first remove daemon with conflicting port or name?
-                if slot.ports or slot.name in [d.name() for d in daemons_to_remove]:
+                # OPTIMIZATION: Use any() to short-circuit instead of building full list
+                if slot.ports or any(d.name() == slot.name for d in daemons_to_remove):
                     for d in daemons_to_remove:
                         if (
                             d.hostname != slot.hostname
@@ -1147,7 +1153,8 @@ class CephadmServe:
 
             if service_type == 'mgr':
                 active_mgr = svc.get_active_daemon(self.mgr.cache.get_daemons_by_type('mgr'))
-                if active_mgr.daemon_id in [d.daemon_id for d in daemons_to_remove]:
+                # OPTIMIZATION: Use any() to short-circuit instead of building full list
+                if any(active_mgr.daemon_id == d.daemon_id for d in daemons_to_remove):
                     # We can't just remove the active mgr like any other daemon.
                     # Need to fail over later so it can be removed on next pass.
                     # This can be accomplished by scheduling a restart of the active mgr.
